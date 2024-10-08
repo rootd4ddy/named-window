@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Target Site</title>
+</head>
+<body>
+    <h1>Welcome to Target Site</h1>
+    <p>This is the target site. Click the button to open the popup window.</p>
+    <button id="openPopup">Open Popup</button>
+    <script>
+        document.getElementById('openPopup').onclick = () => {
+            // Open the popup page with the name "targetWindow"
+            let popupWindow = window.open('http://127.0.0.1:8001/target/popup.html', 'targetWindow', 'width=400,height=400');
+            if (popupWindow) {
+                console.log('Popup window reference reused or created successfully.');
+                popupWindow.onload = function() {
+                    console.log('Popup window has loaded its content.');
+                };
+                popupWindow.focus();
+            } else {
+                console.error('Failed to open popup window. Check if popup blockers are enabled.');
+            }
+        };
+    </script>
+</body>
+</html>

